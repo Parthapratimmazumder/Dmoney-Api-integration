@@ -1,0 +1,679 @@
+{
+	"info": {
+		"_postman_id": "5b9ae9ba-8c54-447f-846f-8efecd15be3d",
+		"name": "Dmoney",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21248224"
+	},
+	"item": [
+		{
+			"name": "User Login",
+			"item": [
+				{
+					"name": "login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"let token = jsonData.token;\r",
+									"pm.collectionVariables.set(\"token\", token);\r",
+									"\r",
+									"pm.test(\"Check if login is successful\", () => {\r",
+									"    pm.expect(jsonData.message).to.include(\"Login successful\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"admin@roadtocareer.net\",\r\n    \"password\": \"1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseurl}}/user/login",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Unsuccessful login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Login unsuccessful for wrong cred\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.message).includes(\"Password incorrect\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"admin@roadtocareer.net\",\r\n    \"password\": \"12345\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://dmoney.roadtocareer.net/user/login",
+							"protocol": "https",
+							"host": [
+								"dmoney",
+								"roadtocareer",
+								"net"
+							],
+							"path": [
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User List",
+			"item": [
+				{
+					"name": "Userlist",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZGVudGlmaWVyIjoiYWRtaW5Acm9hZHRvY2FyZWVyLm5ldCIsInJvbGUiOiJBZG1pbiIsImlhdCI6MTczMTMyMzg0MywiZXhwIjoxNzMxMzI3NDQzfQ.v0duVVOwhCGOYJgrNpFRnxuzb5nUSz1HXCJBA9qEttU",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseurl}}/user/list",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"user",
+								"list"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "SignUp",
+			"item": [
+				{
+					"name": "CREATE USER",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let randomId=_.random(100000,999999)\r",
+									"let prefix= \"01301\";\r",
+									"let phone_number=prefix+randomId;\r",
+									"console.log(phone_number);\r",
+									"\r",
+									"pm.collectionVariables.set(\"phone_number\",phone_number)"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData= pm.response.json();\r",
+									"let userID= jsonData.user.id;\r",
+									"let userEmail= jsonData.user.phone_number;\r",
+									"let phone_number=jsonData.user.phone_number;\r",
+									"\r",
+									"pm.collectionVariables.set (\"userID\",userID);\r",
+									"pm.collectionVariables.set (\"userEmail\",userEmail);\r",
+									"pm.collectionVariables.set (\"phone_number\",phone_number);\r",
+									"\r",
+									"pm.environment.set(\"userID\",userID)\r",
+									"pm.environment.set(\"userEmail\",userEmail)\r",
+									"\r",
+									"pm.test(\"Check new user is created\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"User created\");\r",
+									"});\r",
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "BEARER {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Auth-Secret-Key",
+								"value": "{{partnerkey}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"B12 Roger {{randomLastName}}\",\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"password\": \"1234\",\r\n    \"phone_number\": \"{{phone_number}}\",\r\n    \"nid\": \"12345678\",\r\n    \"role\": \"Merchant\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseurl}}/user/create",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"user",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Duplicate user Signup",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let randomId=_.random(100000,999999)\r",
+									"let prefix= \"01301\";\r",
+									"let phone_number=prefix+randomId;\r",
+									"console.log(phone_number);\r",
+									"\r",
+									"pm.collectionVariables.set(\"phone_number\",phone_number)"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Check if user can sign up multiple times\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"User already exists\");\r",
+									"});\r",
+									"pm.test(\"Status code is 208\", function () {\r",
+									"    pm.response.to.have.status(208);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "BEARER {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Auth-Secret-Key",
+								"value": "{{partnerkey}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n     \"id\": 10527,\r\n            \"name\": \"Pearl Daniel\",\r\n            \"email\": \"agent63073@test.com\",\r\n            \"password\": \"1234\",\r\n            \"phone_number\": \"01701975106\",\r\n            \"nid\": \"6002547921\",\r\n            \"role\": \"Agent\"\r\n }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseurl}}/user/create",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"user",
+								"create"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User Search",
+			"item": [
+				{
+					"name": "search user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-AUTH-SECRET-KEY",
+								"value": "{{partnerkey}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseurl}}/user/search/id/{{userID}}",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"user",
+								"search",
+								"id",
+								"{{userID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search wrong user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"user can not be found by wrong id\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"User not found\");\r",
+									"});\r",
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-AUTH-SECRET-KEY",
+								"value": "{{partnerkey}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseurl}}/user/search/id/105",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"user",
+								"search",
+								"id",
+								"105"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check if wrong token is working",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"user can not be found by wrong id\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"Token expired\");\r",
+									"});\r",
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(403);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "wrong bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-AUTH-SECRET-KEY",
+								"value": "{{partnerkey}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseurl}}/user/search/id/105",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"user",
+								"search",
+								"id",
+								"105"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Update User",
+			"item": [
+				{
+					"name": "Update user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-Auth-Secret-key",
+								"value": "{{partnerkey}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n        \"name\": \"Update B12 Roger\",\r\n        \"email\": \"Kitty_Oberbrunner@gmail.com\",\r\n        \"password\": \"1234\",\r\n        \"phone_number\": \"01301122860\",\r\n        \"nid\": \"12345678\",\r\n        \"role\": \"Merchant\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseurl}}/user/update/{{userID}}",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"user",
+								"update",
+								"{{userID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user by patch",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-Auth-Secret-key",
+								"value": "{{partnerkey}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n        \"name\": \"Update B12 Roger\",\r\n        \"email\": \"Kitty_Oberbrunner@gmail.com\",\r\n        \"password\": \"1234\",\r\n        \"phone_number\": \"01301122860\",\r\n        \"nid\": \"12345678\",\r\n        \"role\": \"Merchant\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseurl}}/user/update/{{userID}}",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"user",
+								"update",
+								"{{userID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Delete User",
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "bearer {{token}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "X-Auth-Secret-Key",
+						"value": "{{partnerkey}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseurl}}/user/delete/{{userID}}",
+					"host": [
+						"{{baseurl}}"
+					],
+					"path": [
+						"user",
+						"delete",
+						"{{userID}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZGVudGlmaWVyIjoiYWRtaW5Acm9hZHRvY2FyZWVyLm5ldCIsInJvbGUiOiJBZG1pbiIsImlhdCI6MTczMTMyNDQ3MywiZXhwIjoxNzMxMzI4MDczfQ.sWMgCqIFtKjhag-loVdF00AT2PvKqupRgJ4lBvZhqRA"
+		},
+		{
+			"key": "baseurl",
+			"value": "https://dmoney.roadtocareer.net",
+			"type": "string"
+		},
+		{
+			"key": "partnerkey",
+			"value": "ROADTOSDET",
+			"type": "string"
+		},
+		{
+			"key": "phone_number",
+			"value": "01301985497"
+		},
+		{
+			"key": "userID",
+			"value": 27404
+		},
+		{
+			"key": "userEmail",
+			"value": "01301330606"
+		}
+	]
+}
