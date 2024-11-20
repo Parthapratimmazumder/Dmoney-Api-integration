@@ -1,18 +1,18 @@
-#DMONEY API Automation
+# DMONEY API Automation
 
-##Project Summary : I have Automated the CRUD functionalities for a user. Here I performed Integration and API testing on DMONEY API
+## Project Summary : This project automates the CRUD functionalities for a user on the DMONEY API. It focuses on **Integration Testing** and **API Testing**, ensuring the reliability and performance of the API endpoints.
 
-##Technologies that I have used are :
+The automation script validates the creation, retrieval, updating, and deletion of user data, providing comprehensive test coverage. The solution is implemented using **Postman** and **Newman** for testing, along with **Node.js** for scripting and configuration.
 
--postman
+---
 
--newman
+## Technologies Used
+- **Postman**: For designing and executing API test cases.
+- **Newman**: To run Postman collections via the command line.
+- **Node.js**: For project setup and execution scripts.
 
--nodejs
-
-##How to run?
-
-
+## How to Run the Project
+Follow these steps to set up and execute the automation tests:
 1.clone this project
 
 2. run this command `npm -i`
@@ -22,7 +22,7 @@
 4. Now hit this command to execute : `npm test`
 
 
-##Output
+## Output
 
 ![image](https://github.com/user-attachments/assets/8ddeee5d-b166-4342-a2c3-48044f58ef7f)
 
